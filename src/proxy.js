@@ -25,7 +25,6 @@ function addModification (url, callback) {
   modifications.push([url, callback]);
 }
 var proxy = {
-  source: source,
   modify: addModification,
   go: go
 };
