@@ -1,0 +1,25 @@
+{
+  "name": "everybody-needs-a-404",
+  "version": "1.0.0",
+  "description": "A small proxy that lets you inject modifications to the response so you can test specific scenarios.",
+  "main": "src/proxy.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/distributedlife/everybody-needs-a-404.git"
+  },
+  "keywords": [
+    "node",
+    "express",
+    "testing",
+    "proxy",
+    "fat",
+    "boy",
+    "slim"
+  ],
+  "author": "Ryan Boucher",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/distributedlife/everybody-needs-a-404/issues"
+  },
+  "homepage": "https://github.com/distributedlife/everybody-needs-a-404#readme"
+}
