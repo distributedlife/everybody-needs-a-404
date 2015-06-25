@@ -1,9 +1,11 @@
+'use strict';
+
 var express = require('express');
 var request = require('request');
 var app = express();
 
-var trueSource = "http://api-aws-qat2.tnet.internal";
 var mode = '200';
+var trueSource;
 
 app.get('/setMode/:mode', function (req, res) {
   mode = req.params.mode;
@@ -37,6 +39,11 @@ function modify(url, callback) {
   });
 }
 
+function setSourceOfTruth (url) {
+  trueSource = url;
+}
+
+app.setSourceOfTruth = setSourceOfTruth;
 app.modify = modify;
 
 module.exports = app;

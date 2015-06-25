@@ -2,9 +2,11 @@
 
 var modifications = [];
 
-function go() {
+function go(url) {
   var app = require('./app');
   var port = process.env.PORT || 3000;
+
+  app.setSourceOfTruth(url);
 
   var length = modifications.length;
   for (var i = 0; i < length; i++) {
@@ -23,6 +25,7 @@ function addModification (url, callback) {
   modifications.push([url, callback]);
 }
 var proxy = {
+  source: source,
   modify: addModification,
   go: go
 };

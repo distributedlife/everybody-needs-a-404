@@ -7,13 +7,13 @@ I use when testing out specific scenarios on mobile applications. I point the mo
 ## How to return a status code.
 
 ```text
-/setMode/404
+http://localhost:3000/setMode/404
 ```
 
 Now all responses return 404.
 
 ```text
-/setMode/200
+http://localhost:3000/setMode/200
 ```
 
 Behaviour returns to normal
@@ -32,11 +32,14 @@ function filterOutASpecificRecord (body) {
 
 var proxy = require('everybody-needs-a-404');
 proxy.modify('/records', filterOutASpecificRecord);
-proxy.go();
+proxy.go('http://the-original-service.com:23423');
 ```
 
 Now set the mode to altered and we are away.
 
 ```text
-/setMode/altered
+http://localhost:3000/setMode/altered
 ```
+
+## What's with the name
+[Everybody Needs a 303](https://www.youtube.com/watch?v=o6eIBE7Bo3U). If the link doesn't work. Google it.
