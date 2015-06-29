@@ -2,10 +2,12 @@
 
 var express = require('express');
 var request = require('request');
+var contains = require('lodash').contains;
 var app = express();
 
 var mode = '200';
 var trueSource;
+var modifiedUrls = [];
 
 app.get('/setMode/:mode', function (req, res) {
   mode = req.params.mode;
@@ -19,11 +21,19 @@ function ProxyRequest (req, res, next) {
     return;
   }
 
-  next();
+  if (contains(modifiedUrls, req.url)) {
+    next();
+  } else {
+    request(trueSource + req.url, function (req2, res2) {
+      res.send(res2.body);
+    });
+  }
 }
 app.use(ProxyRequest);
 
 function modify(url, callback) {
+  modifiedUrls.push(url);
+
   app.get(url, function(req, res) {
 
     if (mode === 'altered') {
