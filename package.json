@@ -1,6 +1,6 @@
 {
   "name": "everybody-needs-a-404",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A small proxy that lets you inject modifications to the response so you can test specific scenarios.",
   "main": "src/proxy.js",
   "repository": {
