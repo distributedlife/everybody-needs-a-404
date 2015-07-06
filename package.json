@@ -8,18 +8,23 @@
     "url": "git+https://github.com/distributedlife/everybody-needs-a-404.git"
   },
   "keywords": [
-    "node",
-    "express",
-    "testing",
-    "proxy",
-    "fat",
     "boy",
-    "slim"
+    "express",
+    "fat",
+    "node",
+    "proxy",
+    "slim",
+    "testing"
   ],
   "author": "Ryan Boucher",
   "license": "BSD-2-Clause",
   "bugs": {
     "url": "https://github.com/distributedlife/everybody-needs-a-404/issues"
   },
-  "homepage": "https://github.com/distributedlife/everybody-needs-a-404#readme"
+  "homepage": "https://github.com/distributedlife/everybody-needs-a-404#readme",
+  "dependencies": {
+    "express": "^4.13.0",
+    "lodash": "^3.10.0",
+    "request": "^2.58.0"
+  }
 }

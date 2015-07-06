@@ -6,8 +6,15 @@ var contains = require('lodash').contains;
 var app = express();
 
 var mode = '200';
+var delay = 0;
 var trueSource;
 var modifiedUrls = [];
+
+app.get('/setDelay/:delay', function (req, res) {
+  delay = req.params.delay;
+
+  res.send("Delay set to " + delay);
+});
 
 app.get('/setMode/:mode', function (req, res) {
   mode = req.params.mode;
@@ -21,13 +28,17 @@ function ProxyRequest (req, res, next) {
     return;
   }
 
-  if (contains(modifiedUrls, req.url)) {
-    next();
-  } else {
-    request(trueSource + req.url, function (req2, res2) {
-      res.send(res2.body);
-    });
+  function afterThePause () {
+    if (contains(modifiedUrls, req.url)) {
+      next();
+    } else {
+      request(trueSource + req.url, function (req2, res2) {
+        res.send(res2.body);
+      });
+    }
   }
+
+  setTimeout(afterThePause, delay);
 }
 app.use(ProxyRequest);
 
