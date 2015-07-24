@@ -55,7 +55,7 @@ function modify(url, callback) {
 
     if (mode === 'altered') {
       request(trueSource + req.url, function (req2, res2) {
-        res.send(callback(res2.body));
+        res.send(callback(res2.body, req));
       });
     } else {
       request(trueSource + req.url, function (req2, res2) {
