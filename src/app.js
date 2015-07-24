@@ -10,6 +10,12 @@ var delay = 0;
 var trueSource;
 var modifiedUrls = [];
 
+app.use(function LogAllTheThings (req, res, next) {
+  console.log("Proxying request for " + req.url);
+
+  next();
+});
+
 app.get('/setDelay/:delay', function (req, res) {
   delay = req.params.delay;
 
