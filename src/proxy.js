@@ -1,6 +1,9 @@
 'use strict';
 
+var each = require('lodash').each;
+
 var modifications = [];
+var rewrites = [];
 
 function go(url) {
   var app = require('./app');
@@ -8,14 +11,15 @@ function go(url) {
 
   app.setSourceOfTruth(url);
 
-  var length = modifications.length;
-  for (var i = 0; i < length; i++) {
-    var modification = modifications[i];
-
+  each(modifications, function(modification) {
     app.modify(modification[0], modification[1]);
-  }
+  });
 
-  var server = app.listen(port, function () {
+  each(rewrites, function(rewrite) {
+    app.rewriteUrl(rewrite[0], rewrite[1]);
+  });
+
+  app.listen(port, function () {
     var versionInfo = require('../package.json');
       console.log('%s@%s listening on %s', versionInfo.name, versionInfo.version, port);
   });
@@ -24,8 +28,14 @@ function go(url) {
 function addModification (url, callback) {
   modifications.push([url, callback]);
 }
+
+function rewriteUrl (url, callback) {
+  rewrites.push([url, callback]);
+}
+
 var proxy = {
   modify: addModification,
+  rewriteUrl: rewriteUrl,
   go: go
 };
 

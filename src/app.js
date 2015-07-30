@@ -11,7 +11,7 @@ var trueSource;
 var modifiedUrls = [];
 
 app.use(function LogAllTheThings (req, res, next) {
-  console.log("Proxying request for " + req.url);
+  console.log('Proxying request for ' + req.url);
 
   next();
 });
@@ -19,50 +19,61 @@ app.use(function LogAllTheThings (req, res, next) {
 app.get('/setDelay/:delay', function (req, res) {
   delay = req.params.delay;
 
-  res.send("Delay set to " + delay);
+  res.send('Delay set to ' + delay);
 });
 
 app.get('/setMode/:mode', function (req, res) {
   mode = req.params.mode;
 
-  res.send("Mode set to " + mode);
+  res.send('Mode set to ' + mode);
 });
 
-function ProxyRequest (req, res, next) {
+function PauseForEFfect (req, res, next) {
   if (mode !== '200' && mode !== 'altered') {
     res.sendStatus(parseInt(mode, 10));
     return;
   }
 
-  function afterThePause () {
-    if (contains(modifiedUrls, req.url)) {
-      next();
-    } else {
-      request(trueSource + req.url, function (req2, res2) {
-        res.send(res2.body);
-      });
-    }
-  }
-
-  setTimeout(afterThePause, delay);
+  setTimeout(next, delay);
 }
-app.use(ProxyRequest);
+app.use(PauseForEFfect);
 
-function modify(url, callback) {
-  modifiedUrls.push(url);
+function makeRequestToTrueSource (url, res) {
+  request(trueSource + url, function (req2, res2) {
+    res.send(res2.body);
+  });
+}
 
+function modifyResponse(url, callback) {
   app.get(url, function(req, res) {
+    if (mode !== 'altered') {
+      makeRequestToTrueSource(req.originalUrl, res);
+    } else {
+      console.log('Modify response for ', req.url);
 
-    if (mode === 'altered') {
       request(trueSource + req.url, function (req2, res2) {
         res.send(callback(res2.body, req));
       });
-    } else {
-      request(trueSource + req.url, function (req2, res2) {
-        res.send(res2.body);
-      });
+    }
+  });
+}
+
+function rewriteUrl(url, rewriteCallback) {
+  app.use(url, function (req, res, next) {
+    if (mode !== 'altered') {
+      makeRequestToTrueSource(req.originalUrl, res);
+      return;
     }
 
+    console.log('Url rewrite for ', req.originalUrl);
+
+    req.url = rewriteCallback(req);
+
+    if (contains(modifiedUrls, url)) {
+      next();
+    } else {
+      makeRequestToTrueSource(req.url, res);
+    }
   });
 }
 
@@ -71,6 +82,7 @@ function setSourceOfTruth (url) {
 }
 
 app.setSourceOfTruth = setSourceOfTruth;
-app.modify = modify;
+app.modify = modifyResponse;
+app.rewriteUrl = rewriteUrl;
 
 module.exports = app;
