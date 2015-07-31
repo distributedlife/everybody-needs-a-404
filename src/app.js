@@ -65,9 +65,9 @@ function rewriteUrl(url, rewriteCallback) {
       return;
     }
 
-    console.log('Url rewrite for ', req.originalUrl);
-
     req.url = rewriteCallback(req);
+
+    console.log('Url rewrite for ', req.originalUrl, 'to', req.url);
 
     if (contains(modifiedUrls, url)) {
       next();
