@@ -16,6 +16,9 @@
     "slim",
     "testing"
   ],
+  "scripts": {
+    "test": "mocha tests/**"
+  },
   "author": "Ryan Boucher",
   "license": "BSD-2-Clause",
   "bugs": {
@@ -26,5 +29,8 @@
     "express": "^4.13.0",
     "lodash": "^3.10.0",
     "request": "^2.58.0"
+  },
+  "devDependencies": {
+    "expect": "^1.8.0"
   }
 }

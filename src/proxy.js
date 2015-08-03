@@ -16,7 +16,7 @@ function go(url) {
   });
 
   each(rewrites, function(rewrite) {
-    app.rewriteUrl(rewrite[0], rewrite[1]);
+    app.rewriteUrl(rewrite[0], rewrite[1], rewrite[2]);
   });
 
   app.listen(port, function () {
@@ -29,8 +29,8 @@ function addModification (url, callback) {
   modifications.push([url, callback]);
 }
 
-function rewriteUrl (url, callback) {
-  rewrites.push([url, callback]);
+function rewriteUrl (url, rewriteCallback, modifyCallback) {
+  rewrites.push([url, rewriteCallback, modifyCallback]);
 }
 
 var proxy = {

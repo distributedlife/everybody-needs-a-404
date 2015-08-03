@@ -2,7 +2,6 @@
 
 var express = require('express');
 var request = require('request');
-var contains = require('lodash').contains;
 var app = express();
 
 var mode = '200';
@@ -44,22 +43,28 @@ function makeRequestToTrueSource (url, res) {
   });
 }
 
+function makeAndModifyRequest (req, res, callback) {
+  console.log('Modify response for ', req.url);
+
+  request(trueSource + req.url, function (req2, res2) {
+    res.send(callback(res2.body, req));
+  });
+}
+
 function modifyResponse(url, callback) {
+  modifiedUrls[url] = callback;
+
   app.get(url, function(req, res) {
     if (mode !== 'altered') {
       makeRequestToTrueSource(req.originalUrl, res);
     } else {
-      console.log('Modify response for ', req.url);
-
-      request(trueSource + req.url, function (req2, res2) {
-        res.send(callback(res2.body, req));
-      });
+      makeAndModifyRequest(req, res, callback);
     }
   });
 }
 
-function rewriteUrl(url, rewriteCallback) {
-  app.use(url, function (req, res, next) {
+function rewriteUrl(url, rewriteCallback, modifyCallback) {
+  app.use(url, function (req, res) {
     if (mode !== 'altered') {
       makeRequestToTrueSource(req.originalUrl, res);
       return;
@@ -69,8 +74,8 @@ function rewriteUrl(url, rewriteCallback) {
 
     console.log('Url rewrite for ', req.originalUrl, 'to', req.url);
 
-    if (contains(modifiedUrls, url)) {
-      next();
+    if (modifyCallback) {
+      makeAndModifyRequest(req, res, modifyCallback);
     } else {
       makeRequestToTrueSource(req.url, res);
     }
