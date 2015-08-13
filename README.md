@@ -41,5 +41,68 @@ Now set the mode to altered and we are away.
 http://localhost:3000/setMode/altered
 ```
 
+## How to rewrite a url
+
+```javascript
+var _  = require('lodash');
+function newUrl (req) {
+  return "/newPath";
+}
+
+var proxy = require('everybody-needs-a-404');
+proxy.rewriteUrl('/records/:id', newUrl);
+proxy.go('http://the-original-service.com:23423');
+```
+
+Now set the mode to altered and we are away.
+
+```text
+http://localhost:3000/setMode/altered
+```
+
+
+## How to rewrite a url AND change the respond
+
+```javascript
+var _  = require('lodash');
+function newUrl (req) {
+  return "/newPath";
+}
+
+function filterOutASpecificRecord (body) {
+  var json = JSON.parse(body);
+
+  json.records = _.reject(json.records, {id: 37});
+
+  return json;
+}
+
+var proxy = require('everybody-needs-a-404');
+proxy.rewriteUrl('/records/:id', newUrl, filterOutASpecificRecord);
+proxy.go('http://the-original-service.com:23423');
+```
+
+Now set the mode to altered and we are away.
+
+```text
+http://localhost:3000/setMode/altered
+```
+
+
+## How to slow down responses
+
+```text
+http://localhost:3000/setDelay/1000
+```
+
+Now all requests will pause for a second before responding
+
+```text
+http://localhost:3000/setDelay/0
+```
+
+Behaviour returns to normal.
+
+
 ## What's with the name
 [Everybody Needs a 303](https://www.youtube.com/watch?v=o6eIBE7Bo3U). If the link doesn't work. Google it.
