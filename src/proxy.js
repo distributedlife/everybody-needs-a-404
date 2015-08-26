@@ -28,9 +28,7 @@ function go(url) {
   app.use(function(req, res) {
     console.log('Unaltered request to ' + req.url);
 
-    request(url + req.url, function (req2, res2) {
-      res.send(res2.body);
-    });
+    req.pipe(request(url + req.url)).pipe(res);
   });
 
   app.use(function(err, req, res) {
