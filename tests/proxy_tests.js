@@ -48,6 +48,13 @@ describe('when mode set to altered', function () {
       done();
     });
   });
+
+  it.only('should still allow other routes to work', function (done) {
+    request('http://localhost:3000/til/content-security-policy-a-retrofit.html', function (req, res) {
+      expect(res.body).toContain('Content Security Policy');
+      done();
+    });
+  });
 });
 
 describe('when most is set to 200', function () {

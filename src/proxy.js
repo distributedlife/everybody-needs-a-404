@@ -1,6 +1,7 @@
 'use strict';
 
 var each = require('lodash').each;
+var request = require('request');
 
 var modifications = [];
 var rewrites = [];
@@ -17,6 +18,24 @@ function go(url) {
 
   each(rewrites, function(rewrite) {
     app.rewriteUrl(rewrite[0], rewrite[1], rewrite[2]);
+  });
+
+  app.use(function(err, req, res, next) {
+    console.error(err);
+    next(err);
+  });
+
+  app.use(function(req, res) {
+    console.log('Unaltered request to ' + req.url);
+
+    request(url + req.url, function (req2, res2) {
+      res.send(res2.body);
+    });
+  });
+
+  app.use(function(err, req, res) {
+    res.status(500);
+    res.render('error', { error: err });
   });
 
   app.listen(port, function () {
