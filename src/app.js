@@ -47,7 +47,11 @@ function makeAndModifyRequest (req, res, callback) {
   console.log('Modify response for ', req.url);
 
   request(trueSource + req.url, function (req2, res2) {
-    res.send(callback(res2.body, req));
+    if (res2.statusCode === 404) {
+      res.sendStatus(404);
+    } else {
+      res.send(callback(res2.body, req));
+    }
   });
 }
 
