@@ -43,10 +43,38 @@ function makeRequestToTrueSource (url, res) {
   });
 }
 
+function makePostRequestToTrueSource (url, res) {
+  var opts = {
+    url: trueSource + url,
+    method: 'POST'
+  };
+
+  request(opts, function (req2, res2) {
+    res.send(res2.body);
+  });
+}
+
 function makeAndModifyRequest (req, res, callback) {
   console.log('Modify response for ', req.url);
 
   request(trueSource + req.url, function (req2, res2) {
+    if (res2.statusCode === 404) {
+      res.sendStatus(404);
+    } else {
+      res.send(callback(res2.body, req));
+    }
+  });
+}
+
+function makeAndModifyPostRequest (req, res, callback) {
+  console.log('Modify response for ', req.url);
+
+  var opts = {
+    url: trueSource + req.url,
+    method: 'POST'
+  };
+
+  request(opts, function (req2, res2) {
     if (res2.statusCode === 404) {
       res.sendStatus(404);
     } else {
@@ -63,6 +91,14 @@ function modifyResponse(url, callback) {
       makeRequestToTrueSource(req.originalUrl, res);
     } else {
       makeAndModifyRequest(req, res, callback);
+    }
+  });
+
+  app.post(url, function(req, res) {
+    if (mode !== 'altered') {
+      makePostRequestToTrueSource(req.originalUrl, res);
+    } else {
+      makeAndModifyPostRequest(req, res, callback);
     }
   });
 }
